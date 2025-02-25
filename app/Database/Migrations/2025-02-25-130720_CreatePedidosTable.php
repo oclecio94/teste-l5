@@ -25,6 +25,11 @@ class CreatePedidosTable extends Migration
                 'constraint' => ['Em Aberto', 'Pago', 'Cancelado'],
                 'default'    => 'Em Aberto',
             ],
+            'total' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '10,2',
+                'default'    => 0,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

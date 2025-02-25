@@ -27,6 +27,10 @@ class CreateProdutosTable extends Migration
                 'type'       => 'INT',
                 'constraint' => 11,
             ],
+            'descricao' => [
+                'type'       => 'TEXT',
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

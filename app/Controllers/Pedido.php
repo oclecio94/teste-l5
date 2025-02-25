@@ -15,7 +15,7 @@ class Pedido extends ResourceController
     {
 
         $this->pedidoModel = new \App\Models\PedidoModel();
-        $this->pedidoProdutoModel = new \App\Models\PedidoProdutoModel(); // Adicionando o modelo de pedido_produto
+        $this->pedidoProdutoModel = new \App\Models\PedidoProdutoModel(); 
         $this->clienteModel = new \App\Models\ClienteModel();
         $this->produtoModel = new \App\Models\ProdutoModel();
     }
@@ -27,7 +27,7 @@ class Pedido extends ResourceController
         foreach ($pedidos as &$pedido) {
             $pedido['produtos'] = $this->pedidoProdutoModel
                 ->select('pedidos_produtos.produto_id, produtos.nome, pedidos_produtos.quantidade, pedidos_produtos.preco_unitario')
-                ->join('produtos', 'produtos.id = pedidos_produtos.produto_id') // Faz o JOIN com a tabela produto
+                ->join('produtos', 'produtos.id = pedidos_produtos.produto_id') 
                 ->where('pedido_id', $pedido['id'])
                 ->findAll();
         }
@@ -56,7 +56,7 @@ class Pedido extends ResourceController
     
         $produtos = $this->pedidoProdutoModel
             ->select('pedidos_produtos.produto_id, produtos.nome, pedidos_produtos.quantidade, pedidos_produtos.preco_unitario')
-            ->join('produtos', 'produtos.id = pedidos_produtos.produto_id') // Faz o JOIN com a tabela produto
+            ->join('produtos', 'produtos.id = pedidos_produtos.produto_id') 
             ->where('pedido_id', $pedido['id'])
             ->findAll();
     
@@ -103,7 +103,7 @@ class Pedido extends ResourceController
             return $this->response->setJSON([
                 'cabecalho' => [
                     'status' => 400,
-                    'mensagem' => 'Estoque insuficiente para o produto ID ' . $produto['produto_id']
+                    'mensagem' => 'Estoque insuficiente para o produto: ' . $produtoAtual['nome']
                 ],
                 'retorno' => null
             ]);
@@ -161,62 +161,40 @@ class Pedido extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
-
+   
         $pedido = $this->pedidoModel->find($id);
-
+    
         if (!$pedido) {
-            $response = [
+            return $this->response->setJSON([
                 'cabecalho' => [
                     'status' => 404,
                     'mensagem' => 'Pedido não encontrado'
                 ],
                 'retorno' => null
-            ];
-
-            return $this->response->setJSON($response);
+            ]);
         }
-
-        $this->pedidoModel->update($id, $request);
-
-        $this->pedidoProdutoModel->where('pedido_id', $id)->delete(); // Apaga os produtos antigos
-        foreach ($request['produtos'] as $produto) {
-            $pedidoProdutoData = [
-                'pedido_id' => $id,
-                'produto_id' => $produto['produto_id'],
-                'quantidade' => $produto['quantidade'],
-                'preco_unitario' => $produto['preco_unitario']
-            ];
-
-            $this->pedidoProdutoModel->insert($pedidoProdutoData);
-        }
-
-        $updatedPedido = $this->pedidoModel->find($id);
-        $produtos = $this->pedidoProdutoModel
-            ->select('produto_id, quantidade, preco_unitario')
-            ->where('pedido_id', $id)
-            ->findAll();
-        $updatedPedido['produtos'] = $produtos;
-
-        if (!$updatedPedido) {
-            $response = [
+    
+        if (!isset($request['status'])) {
+            return $this->response->setJSON([
                 'cabecalho' => [
-                    'status' => 404,
-                    'mensagem' => 'Erro ao atualizar pedido'
+                    'status' => 400,
+                    'mensagem' => 'O campo status é obrigatório'
                 ],
                 'retorno' => null
-            ];
-            return $this->response->setJSON($response);
+            ]);
         }
+    
+        $this->pedidoModel->update($id, ['status' => $request['status']]);
 
-        $response = [
+        $updatedPedido = $this->pedidoModel->find($id);
+    
+        return $this->response->setJSON([
             'cabecalho' => [
                 'status' => 200,
-                'mensagem' => 'Pedido atualizado com sucesso'
+                'mensagem' => 'Status do pedido atualizado com sucesso'
             ],
             'retorno' => $updatedPedido
-        ];
-
-        return $this->response->setJSON($response);
+        ]);
     }
 
     public function delete($id = null)

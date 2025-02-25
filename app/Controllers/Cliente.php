@@ -17,17 +17,41 @@ class Cliente extends ResourceController
 
     public function index()
     {
-        $clientes = $this->clienteModel->findAll();
+        $page = $this->request->getGet('page') ?? 1; 
+        $perPage = $this->request->getGet('per_page') ?? 10; 
+        $search = $this->request->getGet('search');
+
+        $query = $this->clienteModel;
+    
+        if ($search) {
+            $query = $query->groupStart()
+                ->like('cpf_cnpj', $search)
+                ->orLike('nome_razao_social', $search)
+                ->groupEnd();
+        }
+     
+        $clientes = $query->paginate($perPage, 'default', $page);
+        $pager = $query->pager;
     
         $response = [
-              'cabecalho' => [
-                    'status' => 200,
-                    'mensagem' => 'Dados retornados com sucesso'
-                             ],
-              'retorno' => $clientes
-                   ];
-    
-         return $this->response->setJSON($response);
+            'cabecalho' => [
+                'status' => 200,
+                'mensagem' => 'Dados retornados com sucesso'
+            ],
+            'retorno' => [ 
+                'dados' => $clientes,
+                'paginacao' => [
+                    'current_page' => $pager->getCurrentPage(),
+                    'per_page' => $pager->getPerPage(),
+                    'total_items' => $pager->getTotal(),
+                    'last_page' => $pager->getLastPage(),
+                    'next' => $pager->getNextPageURI(),
+                    'previous' => $pager->getPreviousPageURI()
+                ]
+            ]
+        ];
+
+        return $this->response->setJSON($response);
     }
 
     public function show($id = null)

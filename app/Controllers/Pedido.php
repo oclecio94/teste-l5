@@ -22,9 +22,25 @@ class Pedido extends ResourceController
 
     public function index()
     {
-        $pedidos = $this->pedidoModel->findAll();
+        $page = $this->request->getGet('page') ?? 1; 
+        $perPage = $this->request->getGet('per_page') ?? 10; 
+        $clienteId = $this->request->getGet('cliente_id');
+        $status = $this->request->getGet('status');
+
+        $query = $this->pedidoModel;
+
+       if ($clienteId) {
+        $query = $query->where('cliente_id', $clienteId);
+       }
+
+       if ($status) {
+        $query = $query->where('status', $status);
+       }
+
+       $pedidos = $query->paginate($perPage, 'default', $page);
+       $pager = $query->pager;
         
-        foreach ($pedidos as &$pedido) {
+       foreach ($pedidos as &$pedido) {
             $pedido['produtos'] = $this->pedidoProdutoModel
                 ->select('pedidos_produtos.produto_id, produtos.nome, pedidos_produtos.quantidade, pedidos_produtos.preco_unitario')
                 ->join('produtos', 'produtos.id = pedidos_produtos.produto_id') 
@@ -32,13 +48,25 @@ class Pedido extends ResourceController
                 ->findAll();
         }
     
-        return $this->response->setJSON([
+        $response = [
             'cabecalho' => [
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $pedidos
-        ]);
+            'retorno' => [
+                'dados' => $pedidos,
+                'paginacao' => [
+                    'current_page' => $pager->getCurrentPage(),
+                    'per_page' => $pager->getPerPage(),
+                    'total_items' => $pager->getTotal(),
+                    'last_page' => $pager->getLastPage(),
+                    'next' => $pager->getNextPageURI(),
+                    'previous' => $pager->getPreviousPageURI()
+                ]
+            ]
+        ];
+
+        return $this->response->setJSON($response);
     }
     
     public function show($id = null)

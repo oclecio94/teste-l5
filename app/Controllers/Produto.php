@@ -16,14 +16,35 @@ class Produto extends ResourceController
 
     public function index()
     {
-        $produtos = $this->produtoModel->findAll();
+        $page = $this->request->getGet('page') ?? 1; 
+        $perPage = $this->request->getGet('per_page') ?? 10; 
+        $search = $this->request->getGet('search');
+
+        $query = $this->produtoModel;
+
+        if ($search) {
+            $query = $query->like('nome', $search);
+        }
+     
+        $produtos = $query->paginate($perPage, 'default', $page);
+        $pager = $query->pager;
     
         $response = [
             'cabecalho' => [
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $produtos
+            'retorno' => [ 
+                'dados' => $produtos,
+                'paginacao' => [
+                    'current_page' => $pager->getCurrentPage(),
+                    'per_page' => $pager->getPerPage(),
+                    'total_items' => $pager->getTotal(),
+                    'last_page' => $pager->getLastPage(),
+                    'next' => $pager->getNextPageURI(),
+                    'previous' => $pager->getPreviousPageURI()
+                ]
+            ]
         ];
     
         return $this->response->setJSON($response);
@@ -59,7 +80,6 @@ class Produto extends ResourceController
     {
         $request = $this->request->getJSON(true);
 
-        // Verifica se o produto já existe (pode usar o nome ou outro critério, como código de produto)
         $existingProduct = $this->produtoModel->where('nome', $request['nome'])->first();
 
         if ($existingProduct) {

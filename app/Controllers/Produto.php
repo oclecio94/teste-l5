@@ -79,8 +79,9 @@ class Produto extends ResourceController
     public function create()
     {
         $request = $this->request->getJSON(true);
+        $parametros = $request['parametros'];
 
-        $existingProduct = $this->produtoModel->where('nome', $request['nome'])->first();
+        $existingProduct = $this->produtoModel->where('nome', $parametros['nome'])->first();
 
         if ($existingProduct) {
             $response = [
@@ -93,7 +94,7 @@ class Produto extends ResourceController
             return $this->response->setJSON($response);
         }
 
-        $data = $this->produtoModel->insert($request);
+        $data = $this->produtoModel->insert($parametros);
 
         $productId = $this->produtoModel->getInsertID();
 
@@ -124,6 +125,7 @@ class Produto extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
+        $parametros = $request['parametros'];
 
         $product = $this->produtoModel->find($id);
 
@@ -139,7 +141,7 @@ class Produto extends ResourceController
             return $this->response->setJSON($response);
         }
 
-        $existingProduct = $this->produtoModel->where('nome', $request['nome'])->where('id !=', $id)->first();
+        $existingProduct = $this->produtoModel->where('nome', $parametros['nome'])->where('id !=', $id)->first();
 
         if ($existingProduct) {
             $response = [
@@ -152,7 +154,7 @@ class Produto extends ResourceController
             return $this->response->setJSON($response);
         }
 
-        $this->produtoModel->update($id, $request);
+        $this->produtoModel->update($id, $parametros);
 
         $updatedProduct = $this->produtoModel->find($id);
 

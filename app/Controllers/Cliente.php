@@ -83,8 +83,9 @@ class Cliente extends ResourceController
     public function create()
     {
         $request = $this->request->getJSON(true);
+        $parametros = $request['parametros'];
 
-        $existingClient = $this->clienteModel->where('cpf_cnpj', $request['cpf_cnpj'])->first();
+        $existingClient = $this->clienteModel->where('cpf_cnpj', $parametros['cpf_cnpj'])->first();
 
         if ($existingClient) {
            $response = [
@@ -97,7 +98,7 @@ class Cliente extends ResourceController
         return $this->response->setJSON($response);
         }
 
-        $data = $this->clienteModel->insert($request);
+        $data = $this->clienteModel->insert($parametros);
 
         $clientId = $this->clienteModel->getInsertID();
     
@@ -128,6 +129,7 @@ class Cliente extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
+        $parametros = $request['parametros'];
 
         $client = $this->clienteModel->find($id);
 
@@ -143,7 +145,7 @@ class Cliente extends ResourceController
             return $this->response->setJSON($response);
         }
 
-        $existingClient = $this->clienteModel->where('cpf_cnpj', $request['cpf_cnpj'])->where('id !=', $id)->first();
+        $existingClient = $this->clienteModel->where('cpf_cnpj', $parametros['cpf_cnpj'])->where('id !=', $id)->first();
 
         if ($existingClient) {
               $response = [
@@ -156,7 +158,7 @@ class Cliente extends ResourceController
                return $this->response->setJSON($response);
            }
 
-        $this->clienteModel->update($id, $request);
+        $this->clienteModel->update($id, $parametros);
 
         $updatedClient = $this->clienteModel->find($id);
 

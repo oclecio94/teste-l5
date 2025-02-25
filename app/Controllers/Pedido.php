@@ -102,8 +102,9 @@ class Pedido extends ResourceController
     public function create()
     {
         $request = $this->request->getJSON(true);
+        $parametros = $request['parametros'];
 
-        $existingClient = $this->clienteModel->where('id', $request['cliente_id'])->first();
+        $existingClient = $this->clienteModel->where('id', $parametros['cliente_id'])->first();
 
         if (!$existingClient) {
             $response = [
@@ -117,7 +118,7 @@ class Pedido extends ResourceController
         }
 
 
-       foreach ($request['produtos'] as $produto) {
+       foreach ($parametros['produtos'] as $produto) {
         $produtoAtual = $this->produtoModel->find($produto['produto_id']);
 
         if (!$produtoAtual) {
@@ -138,7 +139,7 @@ class Pedido extends ResourceController
         }
        }
 
-        $data = $this->pedidoModel->insert($request);
+        $data = $this->pedidoModel->insert($parametros);
 
         $pedidoId = $this->pedidoModel->getInsertID();
 
@@ -153,7 +154,7 @@ class Pedido extends ResourceController
             return $this->response->setJSON($response);
         }
 
-        foreach ($request['produtos'] as $produto) {
+        foreach ($parametros['produtos'] as $produto) {
             $pedidoProdutoData = [
                 'pedido_id' => $pedidoId,
                 'produto_id' => $produto['produto_id'],
@@ -189,6 +190,7 @@ class Pedido extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
+        $parametros = $request['parametros'];
    
         $pedido = $this->pedidoModel->find($id);
     
@@ -202,7 +204,7 @@ class Pedido extends ResourceController
             ]);
         }
     
-        if (!isset($request['status'])) {
+        if (!isset($parametros['status'])) {
             return $this->response->setJSON([
                 'cabecalho' => [
                     'status' => 400,
@@ -212,7 +214,7 @@ class Pedido extends ResourceController
             ]);
         }
     
-        $this->pedidoModel->update($id, ['status' => $request['status']]);
+        $this->pedidoModel->update($id, ['status' => $parametros['status']]);
 
         $updatedPedido = $this->pedidoModel->find($id);
     

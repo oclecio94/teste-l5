@@ -15,3 +15,9 @@ $routes->get('/produtos/(:num)', 'Produto::show/$1');
 $routes->post('/produtos', 'Produto::create');
 $routes->put('/produtos/(:num)', 'Produto::update/$1');
 $routes->delete('/produtos/(:num)', 'Produto::delete/$1');
+
+$routes->get('/pedidos', 'Pedido::index');
+$routes->get('/pedidos/(:num)', 'Pedido::show/$1');
+$routes->post('/pedidos', 'Pedido::create');
+$routes->put('/pedidos/(:num)', 'Pedido::update/$1');
+$routes->delete('/pedidos/(:num)', 'Pedido::delete/$1');

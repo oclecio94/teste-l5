@@ -17,8 +17,10 @@ class AuthFilter implements FilterInterface
 
         if (!$header) {
             return service('response')->setJSON([
-                'status' => 401,
-                'message' => 'Token não fornecido'
+                'cabecalho' => [
+                    'status' => 401,
+                    'mensagem' => 'Token não fornecido'
+                ],
             ])->setStatusCode(401);
         }
 

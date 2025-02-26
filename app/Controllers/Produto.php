@@ -16,8 +16,8 @@ class Produto extends ResourceController
 
     public function index()
     {
-        $page = $this->request->getGet('page') ?? 1; 
-        $perPage = $this->request->getGet('per_page') ?? 10; 
+        $page = $this->request->getGet('page') ?? 1;
+        $perPage = $this->request->getGet('per_page') ?? 10;
         $search = $this->request->getGet('search');
 
         $query = $this->produtoModel;
@@ -25,16 +25,16 @@ class Produto extends ResourceController
         if ($search) {
             $query = $query->like('nome', $search);
         }
-     
+
         $produtos = $query->paginate($perPage, 'default', $page);
         $pager = $query->pager;
-    
+
         $response = [
             'cabecalho' => [
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => [ 
+            'retorno' => [
                 'dados' => $produtos,
                 'paginacao' => [
                     'current_page' => $pager->getCurrentPage(),
@@ -46,7 +46,7 @@ class Produto extends ResourceController
                 ]
             ]
         ];
-    
+
         return $this->response->setJSON($response);
     }
 
@@ -79,6 +79,16 @@ class Produto extends ResourceController
     public function create()
     {
         $request = $this->request->getJSON(true);
+
+        if (!isset($request['parametros']) || empty($request['parametros'])) {
+            return $this->response->setJSON([
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'Parâmetros inválidos ou ausentes'
+                ],
+            ])->setStatusCode(400);
+        }
+
         $parametros = $request['parametros'];
 
         $existingProduct = $this->produtoModel->where('nome', $parametros['nome'])->first();
@@ -102,7 +112,7 @@ class Produto extends ResourceController
             $response = [
                 'cabecalho' => [
                     'status' => 404,
-                    'mensagem' => 'Erro ao criar produto'
+                    'mensagem' => 'Erro ao cadastrar produto'
                 ],
                 'retorno' => null
             ];
@@ -114,7 +124,7 @@ class Produto extends ResourceController
         $response = [
             'cabecalho' => [
                 'status' => 200,
-                'mensagem' => 'Produto criado com sucesso'
+                'mensagem' => 'Produto cadastrado com sucesso'
             ],
             'retorno' => $product
         ];
@@ -125,6 +135,16 @@ class Produto extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
+
+        if (!isset($request['parametros']) || empty($request['parametros'])) {
+            return $this->response->setJSON([
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'Parâmetros inválidos ou ausentes'
+                ],
+            ])->setStatusCode(400);
+        }
+
         $parametros = $request['parametros'];
 
         $product = $this->produtoModel->find($id);

@@ -103,6 +103,16 @@ class Pedido extends ResourceController
     public function create()
     {
         $request = $this->request->getJSON(true);
+
+        if (!isset($request['parametros']) || empty($request['parametros'])) {
+            return $this->response->setJSON([
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'Parâmetros inválidos ou ausentes'
+                ],
+            ])->setStatusCode(400);
+        }
+
         $parametros = $request['parametros'];
 
         $existingClient = $this->clienteModel->where('id', $parametros['cliente_id'])->first();
@@ -191,6 +201,16 @@ class Pedido extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
+
+        if (!isset($request['parametros']) || empty($request['parametros'])) {
+            return $this->response->setJSON([
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'Parâmetros inválidos ou ausentes'
+                ],
+            ])->setStatusCode(400);
+        }
+
         $parametros = $request['parametros'];
 
         $pedido = $this->pedidoModel->find($id);

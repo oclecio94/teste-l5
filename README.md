@@ -66,6 +66,17 @@ A API estará disponível em: **[http://localhost:8080](http://localhost:8080)**
 | PUT    | `/clientes/{id}` | Atualizar um cliente        |
 | DELETE | `/clientes/{id}` | Remover um cliente          |
 
+**Exemplo de corpo da requisição para criação de cliente:**
+
+```http
+{
+  "parametros": {
+    "cpf_cnpj": "12345678901",
+    "nome_razao_social": "Cliente Exemplo"
+  }
+}
+```
+
 ### 🔹 Produtos
 
 | Método | Endpoint         | Descrição                   |
@@ -76,6 +87,19 @@ A API estará disponível em: **[http://localhost:8080](http://localhost:8080)**
 | PUT    | `/produtos/{id}` | Atualizar um produto        |
 | DELETE | `/produtos/{id}` | Remover um produto          |
 
+**Exemplo de corpo da requisição para criação de produto:**
+
+```http
+{
+  "parametros": {
+    "nome": "Produto Exemplo",
+    "preco": 100.50,
+    "quantidade": 20,
+    "descricao": "Descrição Exemplo"
+  }
+}
+```
+
 ### 🔹 Pedidos
 
 | Método | Endpoint        | Descrição                  |
@@ -85,6 +109,30 @@ A API estará disponível em: **[http://localhost:8080](http://localhost:8080)**
 | POST   | `/pedidos`      | Criar um novo pedido       |
 | PUT    | `/pedidos/{id}` | Atualizar um pedido        |
 | DELETE | `/pedidos/{id}` | Remover um pedido          |
+
+**Exemplo de corpo da requisição para criação de pedido:**
+
+```http
+{
+	"parametros": {
+  "cliente_id": 1,
+  "status": "Em Aberto",
+	"total" : 10.0,
+  "produtos": [
+    {
+      "produto_id": 1,
+      "quantidade": 1,
+			"preco_unitario": 5
+    },
+    {
+      "produto_id": 2,
+      "quantidade": 1,
+			"preco_unitario": 5
+    }
+  ]
+ }
+}
+```
 
 ---
 
@@ -122,7 +170,7 @@ GET /clientes?page=1&per_page=10&search=João
 
 - `page` → Página atual
 - `per_page` → Número de registros por página
-- **Outros filtros** podem ser aplicados com base nos campos disponíveis.
+- `search` → Busca por nome, cpf_cnpj, nome_razao_social e status
 
 ---
 

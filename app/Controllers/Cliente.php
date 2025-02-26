@@ -83,6 +83,16 @@ class Cliente extends ResourceController
     public function create()
     {
         $request = $this->request->getJSON(true);
+
+        if (!isset($request['parametros']) || empty($request['parametros'])) {
+            return $this->response->setJSON([
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'Parâmetros inválidos ou ausentes'
+                ],
+            ])->setStatusCode(400);
+        }
+
         $parametros = $request['parametros'];
 
         $existingClient = $this->clienteModel->where('cpf_cnpj', $parametros['cpf_cnpj'])->first();
@@ -106,7 +116,7 @@ class Cliente extends ResourceController
             $response = [
                 'cabecalho' => [
                     'status' => 404,
-                    'mensagem' => 'Erro ao criar cliente'
+                    'mensagem' => 'Erro ao cadastrar cliente'
                 ],
                 'retorno' => null
             ];
@@ -118,7 +128,7 @@ class Cliente extends ResourceController
         $response = [
             'cabecalho' => [
                 'status' => 200,
-                'mensagem' => 'Cliente criado com sucesso'
+                'mensagem' => 'Cliente cadastrado com sucesso'
             ],
             'retorno' => $client
         ];
@@ -129,6 +139,16 @@ class Cliente extends ResourceController
     public function update($id = null)
     {
         $request = $this->request->getJSON(true);
+
+        if (!isset($request['parametros']) || empty($request['parametros'])) {
+            return $this->response->setJSON([
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'Parâmetros inválidos ou ausentes'
+                ],
+            ])->setStatusCode(400);
+        } 
+
         $parametros = $request['parametros'];
 
         $client = $this->clienteModel->find($id);

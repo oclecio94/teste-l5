@@ -114,7 +114,7 @@ A API estará disponível em: **[http://localhost:8080](http://localhost:8080)**
 
 ```http
 {
-	"parametros": {
+"parametros": {
   "cliente_id": 1,
   "status": "Em Aberto",
 	"total" : 10.0,

@@ -1,68 +1,198 @@
-# CodeIgniter 4 Application Starter
+API de Cadastro de Pedidos de compra - CodeIgniter 4
 
-## What is CodeIgniter?
+Este projeto é uma API REST desenvolvida em CodeIgniter 4 e MySQL, responsável pelo cadastro de pedidos de compra, clientes e produtos.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+📌 Requisitos
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+Antes de rodar o projeto, certifique-se de ter instalado:
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+PHP (>= 8.1)
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+Composer
 
-## Installation & updates
+MySQL
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+Apache/Nginx (Servidor Web)
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+🚀 Instalação e Configuração
 
-## Setup
+Clone o repositório
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+git clone https://github.com/oclecio94/teste-l5
+cd teste-l5
 
-## Important Change with index.php
+Instale as dependências
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+composer install
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+Renomeie o arquivo de configuração .env.example pra .env
 
-**Please** read the user guide for a better explanation of how CI4 works!
+Crie o banco de dados teste-l5
 
-## Repository Management
+Execute as migrations para criar as tabelas
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+php spark migrate
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+Inicie o servidor
 
-## Server Requirements
+php spark serve
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+A API estará disponível em: http://localhost:8080
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+📌 Endpoints
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+🔹 Clientes
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+Método
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Endpoint
+
+Descrição
+
+GET
+
+/clientes
+
+Listar todos os clientes
+
+GET
+
+/clientes/{id}
+
+Obter um cliente específico
+
+POST
+
+/clientes
+
+Criar um novo cliente
+
+PUT
+
+/clientes/{id}
+
+Atualizar um cliente
+
+DELETE
+
+/clientes/{id}
+
+Remover um cliente
+
+🔹 Produtos
+
+Método
+
+Endpoint
+
+Descrição
+
+GET
+
+/produtos
+
+Listar todos os produtos
+
+GET
+
+/produtos/{id}
+
+Obter um produto específico
+
+POST
+
+/produtos
+
+Criar um novo produto
+
+PUT
+
+/produtos/{id}
+
+Atualizar um produto
+
+DELETE
+
+/produtos/{id}
+
+Remover um produto
+
+🔹 Pedidos
+
+Método
+
+Endpoint
+
+Descrição
+
+GET
+
+/pedidos
+
+Listar todos os pedidos
+
+GET
+
+/pedidos/{id}
+
+Obter um pedido específico
+
+POST
+
+/pedidos
+
+Criar um novo pedido
+
+PUT
+
+/pedidos/{id}
+
+Atualizar um pedido
+
+DELETE
+
+/pedidos/{id}
+
+Remover um pedido
+
+🔐 Autenticação com JWT
+
+A API utiliza JWT para autenticação. O token JWT deve ser enviado no header Authorization em cada requisição.
+
+Gerar Token no site https://jwt.io/ com a chave JWT_SECRET que está no .env
+
+Exemplo de uso do Token JWT
+
+GET /clientes HTTP/1.1
+Host: localhost:8080
+Authorization: Bearer SEU_TOKEN_AQUI
+
+🎯 Paginação e Filtros
+
+Todos os endpoints de listagem suportam paginação e filtros.
+
+Exemplo:
+
+GET /clientes?page=1&limit=10&nome=João
+
+Parâmetros:
+
+page: Página atual
+
+limit: Número de registros por página
+
+Outros filtros podem ser aplicados com base nos campos disponíveis
+
+🛠 Tecnologias Utilizadas
+
+PHP 8.1+
+
+CodeIgniter 4
+
+MySQL
+
+JWT (Json Web Token)
+
+Composer
+
+🚀 API desenvolvida para o teste técnico de Desenvolvedor Back-End Jr!

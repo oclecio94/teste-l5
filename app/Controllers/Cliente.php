@@ -17,28 +17,28 @@ class Cliente extends ResourceController
 
     public function index()
     {
-        $page = $this->request->getGet('page') ?? 1; 
-        $perPage = $this->request->getGet('per_page') ?? 10; 
+        $page = $this->request->getGet('page') ?? 1;
+        $perPage = $this->request->getGet('per_page') ?? 10;
         $search = $this->request->getGet('search');
 
         $query = $this->clienteModel;
-    
+
         if ($search) {
             $query = $query->groupStart()
                 ->like('cpf_cnpj', $search)
                 ->orLike('nome_razao_social', $search)
                 ->groupEnd();
         }
-     
+
         $clientes = $query->paginate($perPage, 'default', $page);
         $pager = $query->pager;
-    
+
         $response = [
             'cabecalho' => [
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => [ 
+            'retorno' => [
                 'dados' => $clientes,
                 'paginacao' => [
                     'current_page' => $pager->getCurrentPage(),
@@ -60,22 +60,22 @@ class Cliente extends ResourceController
         if (!$data) {
             $response = [
                 'cabecalho' => [
-                      'status' => 404,
-                      'mensagem' => 'Cliente não encontrado'
-                               ],
+                    'status' => 404,
+                    'mensagem' => 'Cliente não encontrado'
+                ],
                 'retorno' => $data
-                      ];
+            ];
 
             return $this->response->setJSON($response);
         }
 
         $response = [
             'cabecalho' => [
-                  'status' => 200,
-                  'mensagem' => 'Dados retornados com sucesso'
-                           ],
+                'status' => 200,
+                'mensagem' => 'Dados retornados com sucesso'
+            ],
             'retorno' => $data
-                 ];
+        ];
 
         return $this->response->setJSON($response);
     }
@@ -88,20 +88,20 @@ class Cliente extends ResourceController
         $existingClient = $this->clienteModel->where('cpf_cnpj', $parametros['cpf_cnpj'])->first();
 
         if ($existingClient) {
-           $response = [
-            'cabecalho' => [
-                'status' => 400,
-                'mensagem' => 'CPF ou CNPJ já cadastrado'
-            ],
-            'retorno' => null
-           ];
-        return $this->response->setJSON($response);
+            $response = [
+                'cabecalho' => [
+                    'status' => 400,
+                    'mensagem' => 'CPF ou CNPJ já cadastrado'
+                ],
+                'retorno' => null
+            ];
+            return $this->response->setJSON($response);
         }
 
         $data = $this->clienteModel->insert($parametros);
 
         $clientId = $this->clienteModel->getInsertID();
-    
+
         if (!$clientId) {
             $response = [
                 'cabecalho' => [
@@ -114,15 +114,15 @@ class Cliente extends ResourceController
         }
 
         $client = $this->clienteModel->find($clientId);
-    
+
         $response = [
             'cabecalho' => [
                 'status' => 200,
                 'mensagem' => 'Cliente criado com sucesso'
             ],
-            'retorno' => $client 
+            'retorno' => $client
         ];
-    
+
         return $this->response->setJSON($response);
     }
 
@@ -136,11 +136,11 @@ class Cliente extends ResourceController
         if (!$client) {
             $response = [
                 'cabecalho' => [
-                      'status' => 404,
-                      'mensagem' => 'Cliente nao encontrado'
-                               ],
+                    'status' => 404,
+                    'mensagem' => 'Cliente nao encontrado'
+                ],
                 'retorno' => null
-                      ];
+            ];
 
             return $this->response->setJSON($response);
         }
@@ -148,38 +148,38 @@ class Cliente extends ResourceController
         $existingClient = $this->clienteModel->where('cpf_cnpj', $parametros['cpf_cnpj'])->where('id !=', $id)->first();
 
         if ($existingClient) {
-              $response = [
-                 'cabecalho' => [
-                 'status' => 409,
-                 'mensagem' => 'Já existe um cliente com o mesmo CPF ou CNPJ.'
-                      ],
-                  'retorno' => null
-                    ];
-               return $this->response->setJSON($response);
-           }
+            $response = [
+                'cabecalho' => [
+                    'status' => 409,
+                    'mensagem' => 'Já existe um cliente com o mesmo CPF ou CNPJ.'
+                ],
+                'retorno' => null
+            ];
+            return $this->response->setJSON($response);
+        }
 
         $this->clienteModel->update($id, $parametros);
 
         $updatedClient = $this->clienteModel->find($id);
 
         if (!$updatedClient) {
-          $response = [
+            $response = [
                 'cabecalho' => [
-                'status' => 404,
-                'mensagem' => 'Erro ao atualizar cliente'
-            ],
-            'retorno' => null
+                    'status' => 404,
+                    'mensagem' => 'Erro ao atualizar cliente'
+                ],
+                'retorno' => null
             ];
-           return $this->response->setJSON($response);
-         }
+            return $this->response->setJSON($response);
+        }
 
         $response = [
             'cabecalho' => [
-                  'status' => 200,
-                  'mensagem' => 'Cliente atualizado com sucesso'
-                           ],
+                'status' => 200,
+                'mensagem' => 'Cliente atualizado com sucesso'
+            ],
             'retorno' => $updatedClient
-                 ];
+        ];
 
         return $this->response->setJSON($response);
     }
@@ -190,24 +190,24 @@ class Cliente extends ResourceController
         if (!$client) {
             $response = [
                 'cabecalho' => [
-                      'status' => 404,
-                      'mensagem' => 'Cliente nao encontrado'
-                               ],
+                    'status' => 404,
+                    'mensagem' => 'Cliente nao encontrado'
+                ],
                 'retorno' => null
-                      ];
+            ];
 
             return $this->response->setJSON($response);
         }
 
-       $this->clienteModel->delete($id);
+        $this->clienteModel->delete($id);
 
         $response = [
             'cabecalho' => [
-                  'status' => 200,
-                  'mensagem' => 'Cliente deletado com sucesso'
-                           ],
+                'status' => 200,
+                'mensagem' => 'Cliente deletado com sucesso'
+            ],
             'retorno' => $client
-                 ];
+        ];
 
         return $this->response->setJSON($response);
     }
